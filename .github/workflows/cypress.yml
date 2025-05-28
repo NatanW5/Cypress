@@ -1,33 +1,31 @@
-name: Cypress Tests
+name: Cypress Shopify Tests
 
-on: push
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
-  install:
-  # ... omitted install job from above
-
   cypress-run:
-    runs-on: ubuntu-24.04
-    needs: install
+    runs-on: ubuntu-latest
     strategy:
-      # don't fail the entire matrix on failure
       fail-fast: false
       matrix:
-        # run copies of the current job in parallel
-        containers: [1, 2, 3, 4, 5]
+        containers: [1, 2] # 2 parallel workers (optioneel, mag ook 1 zijn)
+
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Download the build folder
-        uses: actions/download-artifact@v4
-        with:
-          name: build
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Cypress run
+      - name: Run Cypress tests in Cypress Cloud
         uses: cypress-io/github-action@v6
         with:
           record: true
           parallel: true
-          group: 'UI-Chrome'
-          start: npm start
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
