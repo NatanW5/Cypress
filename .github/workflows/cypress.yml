@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [1, 2] # 2 parallel workers (optioneel, mag ook 1 zijn)
+        containers: [1] # 2 parallel workers (optioneel, mag ook 1 zijn)
 
     steps:
       - name: Checkout code
